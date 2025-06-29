@@ -1,62 +1,46 @@
 import User from '#models/user'
 import type { HttpContext } from '@adonisjs/core/http'
-
-// Optional kalau mau bikin interface:
-interface WebGuard {
-  attempt(email: string, password: string): Promise<any>
-  logout(): Promise<void>
-  user: any
-}
+import { registerValidator } from '#validators/auth'
 
 export default class AuthController {
+  async showRegisterForm({ inertia }: HttpContext) {
+    return inertia.render('auth/register')
+  }
+
+  async register({ request, response, auth }: HttpContext) {
+    const payload = await request.validateUsing(registerValidator)
+    const user = await User.create({
+      ...payload,
+      role: payload.role || 'user' // Default value
+    })
+
+    await auth.use('web').login(user)
+    return response.redirect('/dashboard')
+  }
+
+  async showLoginForm({ inertia }: HttpContext) {
+    return inertia.render('auth/login')
+  }
+
   async login({ request, response, auth }: HttpContext) {
     const { email, password } = request.only(['email', 'password'])
-    const web = auth.use('web') as any as WebGuard
 
     try {
-      await web.attempt(email, password)
-      return response.redirect('auth/dashboard')
+      await auth.use('web').attempt(email, password)
+      return response.redirect('/dashboard')
     } catch {
-      return response.badRequest('Email atau password salah')
+      return response.redirect().back().withErrors({
+        email: 'Invalid credentials'
+      })
     }
   }
 
   async logout({ auth, response }: HttpContext) {
-    const web = auth.use('web') as any as WebGuard
-    await web.logout()
+    await auth.use('web').logout()
     return response.redirect('/login')
   }
 
-  async me({ auth, response }: HttpContext) {
-    const web = auth.use('web') as any as WebGuard
-    if (!web.user) {
-      return response.unauthorized({ message: 'Belum login' })
-    }
-    return response.ok(web.user)
-  }
-
-  async showRegisterForm({ inertia }: HttpContext) {
-    return inertia.render('/register')
-  }
-
-  async register({ request, response, auth }: HttpContext) {
-    const { email, password } = request.only(['email', 'password'])
-
-    // Simpan user ke database
-    const user = await User.create({ email, password })
-
-    // Login otomatis
-    await auth.use('web').login(user)
-
-    // Redirect ke dashboard
-    return response.redirect('auth/dashboard')
-  }
-
-  async showLoginForm({ inertia }: HttpContext) {
-    return inertia.render('/login')
-  }
-
-   async dashboard({ inertia }: HttpContext) {
+  async dashboard({ inertia }: HttpContext) {
     return inertia.render('auth/dashboard')
   }
 }

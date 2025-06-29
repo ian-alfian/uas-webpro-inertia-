@@ -1,5 +1,3 @@
-// app/validators/Auth.ts // Pastikan nama file adalah Auth.ts
-
 import vine from '@vinejs/vine'
 
 /**
@@ -9,9 +7,11 @@ export const registerValidator = vine.compile(
   vine.object({
     fullName: vine.string().trim().minLength(3),
     email: vine.string().normalizeEmail(),
-    password: vine.string().minLength(8).confirmed(), // 'confirmed' akan mencari field password_confirmation
-    // Error: Property 'default' tidak ada di VineEnum
-role: vine.enum(['admin', 'user']).default('user').optional()
+    password: vine.string().minLength(8).confirmed(),
+    role: vine
+      .enum(['admin', 'user'] as const)  // Gunakan 'as const' untuk type safety
+      .optional()
+      .transform((value) => value || 'user')  // Set default value melalui transform
   })
 )
 
