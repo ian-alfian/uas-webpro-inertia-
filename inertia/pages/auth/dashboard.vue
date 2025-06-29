@@ -3,134 +3,209 @@ import { ref, computed } from 'vue'
 import { Link, router } from '@inertiajs/vue3'
 
 interface MenuItem {
-  id: number;
-  name: string;
-  price: number;
-  image: string;
-  category: string; // Pastikan ini ada dan string
+  id: number
+  name: string
+  price: number
+  image: string
+  category: string
 }
 
 const menuItems = ref<MenuItem[]>([
-  { id: 1, name: 'Manfinity Hypemode Men Striped Print Shirt Without Tee', price: 200000, image: 'https://i.pinimg.com/736x/0a/71/e1/0a71e197488f4690afae3424e917152c.jpg', category: 'Pria' },
-  { id: 2, name: 'Celana Rileks Linen Blend', price: 300000, image: 'https://via.placeholder.com/150', category: 'Wanita' },
-  { id: 3, name: 'Kemeja Lengan Panjang', price: 250000, image: 'https://via.placeholder.com/150', category: 'Pria' },
-  { id: 4, name: 'Jaket Hoodie Casual', price: 350000, image: 'https://via.placeholder.com/150', category: 'Anak' },
-  { id: 5, name: 'Sepatu Sneakers Casual', price: 400000, image: 'https://via.placeholder.com/150', category: 'Pria' },
-  { id: 6, name: 'Tas Ransel Stylish', price: 450000, image: 'https://via.placeholder.com/150', category: 'Wanita' },
-  { id: 7, name: 'Men Short-Sleeved T-shirt with Tree Fox Printing', price: 505000, image: 'https://i.pinimg.com/736x/e4/b8/7e/e4b87ef5bc5041bd7b8a30236fabac3b.jpg', category: 'Pria' },
-  // Tambahan produk dengan kategori yang jelas untuk demo filter
-  { id: 8, name: 'Dress Musim Panas Wanita', price: 320000, image: 'https://via.placeholder.com/150/FFC0CB/000000?text=Dress', category: 'Wanita' },
-  { id: 9, name: 'Blus Formal Wanita', price: 280000, image: 'https://via.placeholder.com/150/FFC0CB/000000?text=Blus', category: 'Wanita' },
-  { id: 10, name: 'Kaos Anak Karakter', price: 150000, image: 'https://via.placeholder.com/150/ADD8E6/000000?text=Kaos+Anak', category: 'Anak' },
-  { id: 11, name: 'Baju Tidur Bayi', price: 120000, image: 'https://via.placeholder.com/150/F0F8FF/000000?text=Baju+Bayi', category: 'Bayi' },
-])
+  {
+    id: 1,
+    name: 'Manfinity Hypemode Men Striped Print Shirt Without Tee',
+    price: 200000,
+    image: 'https://i.pinimg.com/736x/0a/71/e1/0a71e197488f4690afae3424e917152c.jpg',
+    category: 'Pria'
+  }, // <-- Perhatikan koma antar item
+  {
+    id: 2,
+    name: 'Celana Rileks Linen Blend',
+    price: 300000,
+    image: 'https://via.placeholder.com/300x200/aabbcc/ffffff?text=Celana',
+    category: 'Wanita'
+  } // <-- Tidak ada koma di item terakhir
+]) // <-- Kurung siku penutup
 
-// State untuk kategori yang aktif, default ke 'Semua' agar semua produk tampil awalnya
 const activeCategory = ref('Semua')
+const isMobileMenuOpen = ref(false)
 
-// Fungsi untuk mengubah kategori aktif
 function setActiveCategory(category: string) {
   activeCategory.value = category
+  isMobileMenuOpen.value = false
 }
 
-// Computed property untuk memfilter menuItems berdasarkan kategori aktif
 const filteredMenuItems = computed(() => {
-  if (activeCategory.value === 'Semua') {
-    return menuItems.value
-  } else {
-    return menuItems.value.filter(item => item.category === activeCategory.value)
-  }
-})
-
-// Ambil jumlah item di keranjang dari localStorage
-const totalCartItems = computed(() => {
-  const cart = JSON.parse(localStorage.getItem('cart') || '[]')
-  return cart.reduce((sum: number, item: any) => sum + (item.quantity || 1), 0)
+  return activeCategory.value === 'Semua'
+    ? menuItems.value
+    : menuItems.value.filter(item => item.category === activeCategory.value)
 })
 
 const addToCart = (item: MenuItem) => {
   const cart = JSON.parse(localStorage.getItem('cart') || '[]')
   const existing = cart.find((i: any) => i.id === item.id)
+
   if (existing) {
     existing.quantity += 1
   } else {
     cart.push({ ...item, quantity: 1 })
   }
+
   localStorage.setItem('cart', JSON.stringify(cart))
-  window.dispatchEvent(new Event('storage')) // Update badge di header
+  window.dispatchEvent(new Event('storage'))
   router.visit('/cart')
 }
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-100">
-    <header class="bg-white shadow-md py-4 px-8 flex items-center justify-between">
-      <nav class="flex-1 flex justify-center space-x-6">
-        <Link href="#" class="text-gray-700 hover:underline" @click="setActiveCategory('Wanita')">Wanita</Link>
-        <Link href="#" class="text-gray-700 hover:underline" @click="setActiveCategory('Pria')">Pria</Link>
-        <Link href="#" class="text-gray-700 hover:underline" @click="setActiveCategory('Anak')">Anak</Link>
-        <Link href="#" class="text-gray-700 hover:underline" @click="setActiveCategory('Bayi')">Bayi</Link>
-        <Link href="#" class="text-gray-700 hover:underline" @click="setActiveCategory('Semua')">Semua</Link>
-      </nav>
-
-      <div class="flex justify-center space-x-2 mb-8 bg-black rounded-full px-4 py-2">
-        <button @click="setActiveCategory('Wanita')" :class="{'bg-yellow-500': activeCategory === 'Wanita', 'bg-black': activeCategory !== 'Wanita'}" class="px-4 py-2 text-white rounded-full">WANITA</button>
-        <button @click="setActiveCategory('Pria')" :class="{'bg-yellow-500': activeCategory === 'Pria', 'bg-black': activeCategory !== 'Pria'}" class="px-4 py-2 text-white rounded-full">PRIA</button>
-        <button @click="setActiveCategory('Anak')" :class="{'bg-yellow-500': activeCategory === 'Anak', 'bg-black': activeCategory !== 'Anak'}" class="px-4 py-2 text-white rounded-full">ANAK</button>
-        <button @click="setActiveCategory('Bayi')" :class="{'bg-yellow-500': activeCategory === 'Bayi', 'bg-black': activeCategory !== 'Bayi'}" class="px-4 py-2 text-white rounded-full">BAYI</button>
-        <button @click="setActiveCategory('Semua')" :class="{'bg-yellow-500': activeCategory === 'Semua', 'bg-black': activeCategory !== 'Semua'}" class="px-4 py-2 text-white rounded-full">SEMUA</button>
+  <div class="min-h-screen bg-gray-100 font-inter">
+    <header
+      class="bg-white shadow-lg py-4 px-4 sm:px-6 lg:px-8 flex items-center justify-between flex-wrap"
+    >
+      <div class="flex items-center justify-between w-full lg:w-auto">
+        <!-- Hamburger Menu for Mobile -->
+        <button
+          @click="isMobileMenuOpen = !isMobileMenuOpen"
+          class="block lg:hidden px-3 py-2 border rounded text-gray-500 border-gray-400 hover:text-gray-800 hover:border-gray-800 focus:outline-none"
+          aria-label="Toggle navigation"
+        >
+          <svg class="fill-current h-6 w-6" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path v-if="!isMobileMenuOpen" d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
+            <path
+              v-else
+              d="M10 8.586L2.929 1.515 1.515 2.929 8.586 10l-7.071 7.071 1.414 1.414L10 11.414l7.071 7.071 1.414-1.414L11.414 10l7.071-7.071-1.414-1.414L10 8.586z"
+            />
+          </svg>
+        </button>
       </div>
-      </header>
 
-    <main class="p-8">
-      <div class="bg-white shadow-lg rounded-lg p-6 mb-8">
-        <h1 class="text-3xl font-bold mb-6 text-gray-800 text-center">
-          Koleksi {{ activeCategory === 'Semua' ? 'Semua' : activeCategory }} Produk
+      <!-- Main Navigation & Category Filters -->
+      <nav
+        :class="{ block: isMobileMenuOpen, hidden: !isMobileMenuOpen }"
+        class="w-full lg:flex lg:items-center lg:w-auto mt-4 lg:mt-0 lg:flex-row flex-col items-center justify-center"
+      >
+        <!-- Top Navigation Links -->
+
+        <!-- Category Filter Buttons (Responsive) -->
+        <div
+          class="flex flex-wrap justify-center lg:justify-center gap-2 bg-gray-200 rounded-full p-2 w-full lg:w-auto"
+        >
+          <button
+            @click="setActiveCategory('Semua')"
+            :class="{
+              'bg-blue-600 text-white': activeCategory === 'Semua',
+              'bg-gray-300 text-gray-700 hover:bg-gray-400': activeCategory !== 'Semua',
+            }"
+            class="px-4 py-2 rounded-full font-medium transition-colors text-sm sm:text-base"
+          >
+            SEMUA
+          </button>
+          <button
+            @click="setActiveCategory('Pria')"
+            :class="{
+              'bg-blue-600 text-white': activeCategory === 'Pria',
+              'bg-gray-300 text-gray-700 hover:bg-gray-400': activeCategory !== 'Pria',
+            }"
+            class="px-4 py-2 rounded-full font-medium transition-colors text-sm sm:text-base"
+          >
+            PRIA
+          </button>
+          <button
+            @click="setActiveCategory('Wanita')"
+            :class="{
+              'bg-blue-600 text-white': activeCategory === 'Wanita',
+              'bg-gray-300 text-gray-700 hover:bg-gray-400': activeCategory !== 'Wanita',
+            }"
+            class="px-4 py-2 rounded-full font-medium transition-colors text-sm sm:text-base"
+          >
+            WANITA
+          </button>
+          <button
+            @click="setActiveCategory('Anak')"
+            :class="{
+              'bg-blue-600 text-white': activeCategory === 'Anak',
+              'bg-gray-300 text-gray-700 hover:bg-gray-400': activeCategory !== 'Anak',
+            }"
+            class="px-4 py-2 rounded-full font-medium transition-colors text-sm sm:text-base"
+          >
+            ANAK
+          </button>
+          <button
+            @click="setActiveCategory('Bayi')"
+            :class="{
+              'bg-blue-600 text-white': activeCategory === 'Bayi',
+              'bg-gray-300 text-gray-700 hover:bg-gray-400': activeCategory !== 'Bayi',
+            }"
+            class="px-4 py-2 rounded-full font-medium transition-colors text-sm sm:text-base"
+          >
+            BAYI
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 sm:px-6 lg:px-8">
+      <div class="bg-white shadow-xl rounded-lg p-6 sm:p-8 mb-8">
+        <h1 class="text-3xl sm:text-4xl font-extrabold mb-8 text-gray-900 text-center">
+          Koleksi Produk {{ activeCategory === 'Semua' ? 'Lengkap' : activeCategory }}
         </h1>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div v-for="product in filteredMenuItems" :key="product.id" class="border rounded-lg p-4">
-            <img :src="product.image" :alt="product.name" class="rounded-lg mb-4 w-full h-40 object-cover">
-            <h2 class="text-lg font-semibold">{{ product.name }}</h2> <p class="text-black">Rp {{ product.price.toLocaleString() }}</p>
-            <button
-              @click="addToCart(product)"
-              class="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
-              Tambah ke Keranjang
-            </button>
-            <button
-              @click="addToCart(product)"
-              class="mt-6 bg-green-500 text-white py-2 px-2 rounded hover:bg-green-600">
-              Beli
-            </button>
+        <div
+          v-if="filteredMenuItems.length === 0"
+          class="text-center text-gray-600 text-lg py-10 border rounded-lg bg-gray-50"
+        >
+          <p>Belum ada produk di kategori ini.</p>
+          <Link
+            href="/"
+            class="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-full transition-colors"
+            >Kembali ke Beranda</Link
+          >
+        </div>
+
+        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div
+            v-for="product in filteredMenuItems"
+            :key="product.id"
+            class="border border-gray-200 rounded-lg shadow-sm overflow-hidden flex flex-col transform transition-all hover:scale-105 duration-300 bg-white"
+          >
+            <img
+              :src="product.image || 'https://placehold.co/300x200/cccccc/333333?text=Produk'"
+              :alt="product.name"
+              class="w-full h-48 object-cover"
+            />
+            <div class="p-4 flex-grow flex flex-col">
+              <h2 class="text-lg font-semibold text-gray-800 mb-2 truncate">{{ product.name }}</h2>
+              <p class="text-blue-600 font-bold text-xl mb-4">
+                Rp {{ product.price.toLocaleString('id-ID') }}
+              </p>
+
+              <div class="mt-auto flex flex-col sm:flex-row gap-2">
+                <button
+                  @click="addToCart(product)"
+                  class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-full font-medium transition-colors shadow-md"
+                >
+                  Tambah ke Keranjang
+                </button>
+                <!-- Tombol 'Beli' bisa diarahkan langsung ke checkout atau detail produk -->
+                <Link
+                  :href="`/product/${product.id}/buy`"
+                  class="flex-1 text-center bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-full font-medium transition-colors shadow-md"
+                >
+                  Beli
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </main>
+
+    <footer class="bg-gray-800 text-white text-center p-4 text-sm mt-8">
+      &copy; 2025 Toko Online. All rights reserved.
+    </footer>
   </div>
 </template>
 
 <style scoped>
-header {
-  font-family: Arial, sans-serif;
-}
-
-h1 {
-  color: #333;
-}
-
-button {
-  transition: background-color 0.3s;
-}
-
-button:hover {
-  cursor: pointer;
-}
-
-footer {
-  font-size: 0.9rem;
-}
-
-.relative {
-  position: relative;
-}
+/* Scoped styles dihapus atau diganti dengan Tailwind classes */
 </style>

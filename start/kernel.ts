@@ -8,14 +8,14 @@
 |
 */
 
-import router from '@adonisjs/core/services/router';
-import server from '@adonisjs/core/services/server';
+import router from '@adonisjs/core/services/router'
+import server from '@adonisjs/core/services/server'
 
 /**
  * The error handler is used to convert an exception
  * to a HTTP response.
  */
-server.errorHandler(() => import('#exceptions/handler'));
+server.errorHandler(() => import('#exceptions/handler'))
 
 /**
  * The server middleware stack runs middleware on all the HTTP
@@ -27,8 +27,8 @@ server.use([
   () => import('@adonisjs/static/static_middleware'), // Serve static files
   () => import('@adonisjs/cors/cors_middleware'), // Handle CORS
   () => import('@adonisjs/vite/vite_middleware'), // Vite middleware
-  () => import('@adonisjs/inertia/inertia_middleware') // Inertia middleware
-]);
+  () => import('@adonisjs/inertia/inertia_middleware'), // Inertia middleware
+])
 
 /**
  * The router middleware stack runs middleware on all the HTTP
@@ -39,14 +39,15 @@ router.use([
   () => import('@adonisjs/session/session_middleware'), // Manage session
   () => import('@adonisjs/shield/shield_middleware'), // CSRF protection
   () => import('@adonisjs/auth/initialize_auth_middleware'), // Initialize authentication
-  () => import('#middleware/share_example_middleware') // Custom shared data middleware
-]);
+  () => import('#middleware/share_example_middleware'), // Custom shared data middleware
+])
 
 /**
  * Named middleware collection must be explicitly assigned to
  * the routes or the routes group.
  */
 export const middleware = router.named({
-  guest: () => import('#middleware/guest_middleware'), // Middleware for guest users
-  auth: () => import('#middleware/auth_middleware') // Middleware for authenticated users
-});
+  guest: () => import('#middleware/guest_middleware'),
+  auth: () => import('#middleware/auth_middleware'),
+  role: () => import('#middleware/role_middleware'), // Tambahkan ini
+})

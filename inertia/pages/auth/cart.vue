@@ -36,33 +36,57 @@ const calculateTotal = computed(() =>
   <div class="min-h-screen bg-gray-100">
     <header class="bg-white shadow-md py-4 px-8 flex items-center justify-between">
       <div class="text-center">
-        <Link href="/dashboard" class="inline-block mt-6 bg-yellow-500 text-black px-6 py-2 rounded-lg font-bold hover:bg-yellow-600 transition">
+        <Link
+          href="/dashboard"
+          class="inline-block mt-6 bg-blue-600 text-black px-6 py-2 rounded-lg font-bold hover:bg-blue-900 transition"
+        >
           ←
         </Link>
-        </div>
+      </div>
       <h1 class="text-2xl font-bold">Keranjang Belanja</h1>
     </header>
 
     <main class="p-8">
       <div v-if="cartItems.length" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div v-for="item in cartItems" :key="item.id" class="bg-white p-6 rounded-lg shadow-lg">
-          <img :src="item.image" :alt="item.name" class="w-full h-48 object-cover rounded-lg mb-4">
+          <img
+            :src="item.image"
+            :alt="item.name"
+            class="w-full h-48 object-cover rounded-lg mb-4"
+          />
           <h2 class="text-lg font-semibold mb-2">{{ item.name }}</h2>
           <p class="text-black mb-4">Rp {{ item.price.toLocaleString() }}</p>
           <div class="text-gray-400 flex items-center justify-between mb-4">
-            <button @click="updateQuantity(item.id, -1)" class="px-4 py-2 bg-gray-300 rounded hover:bg-black">-</button>
+            <button
+              @click="updateQuantity(item.id, -1)"
+              class="px-4 py-2 bg-gray-300 rounded hover:bg-black"
+            >
+              -
+            </button>
             <span class="px-4">{{ item.quantity }}</span>
-            <button @click="updateQuantity(item.id, 1)" class="px-4 py-2 bg-gray-300 rounded hover:bg-black">+</button>
+            <button
+              @click="updateQuantity(item.id, 1)"
+              class="px-4 py-2 bg-gray-300 rounded hover:bg-black"
+            >
+              +
+            </button>
           </div>
-          <button @click="removeItem(item.id)" class="w-full bg-red-500 text-white py-2 rounded hover:bg-red-700">Hapus</button>
+          <button
+            @click="removeItem(item.id)"
+            class="w-full bg-red-500 text-white py-2 rounded hover:bg-red-700"
+          >
+            Hapus
+          </button>
         </div>
       </div>
 
-
-
       <div v-if="cartItems.length" class="mt-12 border-t pt-6">
-        <h2 class="text-black text-2xl font-semibold mb-4">Total: Rp {{ calculateTotal.toLocaleString() }}</h2>
-        <button class="bg-green-500 text-white py-3 px-8 rounded-lg hover:bg-green-600">Lanjutkan ke Pembayaran</button>
+        <h2 class="text-black text-2xl font-semibold mb-4">
+          Total: Rp {{ calculateTotal.toLocaleString() }}
+        </h2>
+        <button class="bg-green-500 text-white py-3 px-8 rounded-lg hover:bg-green-600">
+          Lanjutkan ke Pembayaran
+        </button>
       </div>
     </main>
   </div>

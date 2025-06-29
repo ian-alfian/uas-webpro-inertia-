@@ -27,4 +27,11 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime | null
+
+  @column({
+  prepare: (value: string) => value || 'user' // Default role
+})
+
+  @column()
+  declare role: string // Tambahkan ini
 }

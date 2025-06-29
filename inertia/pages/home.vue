@@ -32,8 +32,7 @@ onUnmounted(() => {
   <Head title="Pemuda Hijrah Collection" />
   <div class="min-h-screen flex flex-col bg-black text-white">
     <!-- Header (bisa diisi logo atau navigasi jika perlu) -->
-    <header>
-  </header>
+    <header></header>
 
     <main class="flex flex-col items-center justify-center flex-grow px-8">
       <!-- Carousel -->
@@ -58,7 +57,7 @@ onUnmounted(() => {
             @click="currentIndex = idx"
             :class="[
               'w-3 h-3 rounded-full',
-              currentIndex === idx ? 'bg-yellow-500' : 'bg-gray-400'
+              currentIndex === idx ? 'bg-yellow-500' : 'bg-gray-400',
             ]"
           ></button>
         </div>
@@ -71,7 +70,10 @@ onUnmounted(() => {
         <p class="text-lg text-white mb-6">Extra COTTON</p>
         <p class="text-2xl font-bold text-yellow-500 mb-4">Rp 200.000</p>
         <p class="text-sm text-gray-300">Fashion</p>
-        <Link href="/dashboard" class="inline-block mt-6 bg-yellow-500 text-black px-6 py-2 rounded-lg font-bold hover:bg-yellow-600 transition">
+        <Link
+          href="/dashboard"
+          class="inline-block mt-6 bg-yellow-500 text-black px-6 py-2 rounded-lg font-bold hover:bg-yellow-600 transition"
+        >
           Lihat Produk
         </Link>
       </div>

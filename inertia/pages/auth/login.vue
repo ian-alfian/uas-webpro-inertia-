@@ -33,7 +33,9 @@ function submitForm(e: Event) {
       class="absolute inset-0 bg-cover bg-center blur-md scale-105 z-0"
       style="background-image: url('/images/bg5.jpeg')"
     ></div>
-    <div class="absolute inset-0 bg-gradient-to-b from-black/80 via-gray-900/60 to-cyan-950/70 z-0"></div>
+    <div
+      class="absolute inset-0 bg-gradient-to-b from-black/80 via-gray-900/60 to-cyan-950/70 z-0"
+    ></div>
 
     <!-- Login box -->
     <div
@@ -88,7 +90,9 @@ function submitForm(e: Event) {
                   required
                   class="py-3 px-4 block w-full bg-cyan-100/10 text-cyan-100 border border-cyan-400/40 rounded-lg text-sm focus:border-cyan-500 focus:ring-cyan-500 focus:outline-none"
                 />
-                <p v-if="errors.password" class="text-xs text-red-300 mt-2">{{ errors.password }}</p>
+                <p v-if="errors.password" class="text-xs text-red-300 mt-2">
+                  {{ errors.password }}
+                </p>
               </div>
 
               <div>
@@ -109,10 +113,12 @@ function submitForm(e: Event) {
     <div
       class="z-10 hidden lg:flex flex-col justify-center max-w-md text-cyan-100 text-lg font-medium leading-relaxed space-y-4 lg:ml-60"
     >
-      <p class="text-3xl font-bold text-cyan-300">✨ Selamat Datang di Komunitas Pecinta One Piece</p>
+      <p class="text-3xl font-bold text-cyan-300">
+        ✨ Selamat Datang di Komunitas Pecinta One Piece
+      </p>
       <p>
-        Di sini, kamu bisa berbagi teori, saling menginspirasi, dan menyalurkan pendapat dengan penuh
-        semangat.
+        Di sini, kamu bisa berbagi teori, saling menginspirasi, dan menyalurkan pendapat dengan
+        penuh semangat.
       </p>
       <p>"Mending ngobrol bareng kami daripada cuma scroll doang."</p>
     </div>
